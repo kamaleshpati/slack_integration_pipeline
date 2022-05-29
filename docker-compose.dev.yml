@@ -1,0 +1,54 @@
+version: '3.7'
+services:
+  db:
+    container_name: db
+    image: postgres:13.4-alpine
+    restart: always
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    logging:
+      options:
+        max-size: 20m
+        max-file: "3"
+    volumes:
+      - db:/var/lib/postgres/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - slack_integration
+
+  django:
+    restart: always
+    container_name: django
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    entrypoint: /entrypoint.sh
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+      # - asset:/code/asset
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_PORT=5432
+      - POSTGRES_NAME=db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    depends_on:
+      - db
+    links:
+      - db:db
+    networks:
+      - slack_integration
+
+volumes:
+  media:
+    driver: local
+  db:
+    driver: local
+
+networks:
+  slack_integration:
+    driver: bridge
