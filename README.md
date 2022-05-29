@@ -1,7 +1,7 @@
 <h1>simple slack django integration</h1>
 
-[comment]: <> (brew install ngrok/ngrok/ngrok)
+[comment]: <install ngrok> (brew install ngrok/ngrok/ngrok)
 
-[comment]: <> (ngrok config add-authtoken <token>)
+[comment]: <add token> (ngrok config add-authtoken <token>)
 
-[comment]: <> (ngrok http 8000)
+[comment]: <start> (ngrok http 8000)
