@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python:3.9
+      - image: circleci/python:3
     steps:
       - checkout
       - restore_cache:
@@ -17,10 +17,19 @@ jobs:
           paths:
             - "venv"
       - run:
+          name: Install Docker Compose
+          environment:
+            COMPOSE_VERSION: '1.29.2'
+          command: |
+            curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o ~/docker-compose
+            chmod +x ~/docker-compose
+            sudo mv ~/docker-compose /usr/local/bin/docker-compose
+      - setup_remote_docker:
+          docker_layer_caching: false
+      - run:
           name: Running tests
           command: |
-            . venv/bin/activate
-            python3 manage.py test
+            docker-compose up django-test
       - store_artifacts:
           path: test-reports/
           destination: slack_integration_app

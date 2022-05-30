@@ -18,12 +18,12 @@ services:
     networks:
       - slack_integration
 
-  django:
+  django-dev:
     restart: always
-    container_name: django
+    container_name: django-dev
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: Dockerfile.dev
     entrypoint: /entrypoint.sh
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
@@ -36,6 +36,28 @@ services:
       - POSTGRES_NAME=db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    depends_on:
+      - db
+    links:
+      - db:db
+    networks:
+      - slack_integration
+
+  django-test:
+    container_name: django-test
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    entrypoint: /entrypoint.sh
+    command: python manage.py test
+    volumes:
+      - .:/code
+    environment:
+      - POSTGRES_PORT=5432
+      - POSTGRES_NAME=db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - env=test
     depends_on:
       - db
     links:

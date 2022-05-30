@@ -1,0 +1,31 @@
+{
+       "client_msg_id": "aa214007-a303-4906-848d-36f459e64221",
+       "type": "app_mention",
+       "text": "<@U03H4QV14H4> jlll",
+       "user": "U033Q99808Y",
+       "ts": "1653728858.381809",
+       "team": "T032TSQALFQ",
+       "blocks": [
+              {
+                     "type": "rich_text",
+                     "block_id": "TgQqu",
+                     "elements": [
+                            {
+                                   "type": "rich_text_section",
+                                   "elements": [
+                                          {
+                                                 "type": "user",
+                                                 "user_id": "U03H4QV14H4"
+                                          },
+                                          {
+                                                 "type": "text",
+                                                 "text": " jlll"
+                                          }
+                                   ]
+                            }
+                     ]
+              }
+       ],
+       "channel": "C0330H0LR5H",
+       "event_ts": "1653728858.381809"
+}
