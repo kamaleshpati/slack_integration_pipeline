@@ -88,15 +88,22 @@ class FilesOperation(APIView):
         if env != "test" and slack_message.get('token') != SLACK_VERIFICATION_TOKEN:
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-        file_ = open("/code/asset/" + slack_message["text"], "r")
+        file_name = slack_message["text"]
+
 
         if env != "test" and Client is not None:
             try:
-                Client.api_call("files.upload",
-                                files={'file': file_.buffer},
-                                data={'channels': slack_message.get('channel_id'),
-                                      'filename': file_.name,
-                                      'title': file_.name})
+                if file_name is "" or file_name is None:
+                    Client.chat_postMessage(method='chat.postMessage',
+                                            channel=slack_message.get('channel_id'),
+                                            text="no file name is given")
+                else:
+                    file_ = open("/code/asset/" + file_name, "r")
+                    Client.api_call("files.upload",
+                                    files={'file': file_.buffer},
+                                    data={'channels': slack_message.get('channel_id'),
+                                          'filename': file_.name,
+                                          'title': file_.name})
             except Exception as e:
                 logging.warn("cant post message")
 
