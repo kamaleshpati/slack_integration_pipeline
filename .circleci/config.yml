@@ -30,6 +30,7 @@ jobs:
           name: Running tests
           command: |
             docker-compose up django-test
+            echo $
       - store_artifacts:
           path: test-reports/
           destination: slack_integration_app
