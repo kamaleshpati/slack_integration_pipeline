@@ -20,7 +20,7 @@ jobs:
           name: Install `docker-compose`
           command: |
             curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
-            pip install docker-compose docker==2.3
+            pip install docker-compose docker
       - setup_remote_docker:
           docker_layer_caching: false
       - run:
