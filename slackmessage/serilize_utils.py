@@ -8,7 +8,8 @@ from slackmessage.serializer import UserSerializer, MessageSerializer
 
 env = os.environ.get('env')
 
-def serialize_userinfo(Client ,user_id:str):
+
+def serialize_userinfo(Client, user_id: str):
     if env == "test":
         userinfo = json.load(open("/code/slackmessage/resources/user.json"))
     else:
@@ -26,7 +27,7 @@ def serialize_userinfo(Client ,user_id:str):
     return user
 
 
-def serialize_messageinfo(event_message:dict, author:str):
+def serialize_messageinfo(event_message: dict, author: str):
     message = dict()
     message['message_id'] = event_message['client_msg_id']
     message['slackuser_id'] = event_message['user']
@@ -42,6 +43,6 @@ def serialize_messageinfo(event_message:dict, author:str):
     return message
 
 
-def get_all_message(user_id:str):
+def get_all_message(user_id: str):
     res = Message.objects.filter(slackuser_id=user_id)
     return serializers.serialize("json", res)

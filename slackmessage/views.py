@@ -61,12 +61,11 @@ class Events(APIView):
 class Messages(APIView):
     def post(self, request, *args, **kwargs):
         slack_message = request.data
-        if slack_message.get('token') != SLACK_VERIFICATION_TOKEN:
+        if env != "test" and slack_message.get('token') != SLACK_VERIFICATION_TOKEN:
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-        res = get_all_message(slack_message["user_id"])
-
         if env != "test" and Client is not None:
+            res = get_all_message(slack_message["user_id"])
             Client.chat_postMessage(method='chat.postMessage',
                                     channel=slack_message.get('channel_id'),
                                     text=res)
@@ -77,7 +76,7 @@ class Messages(APIView):
 class FilesOperation(APIView):
     def post(self, request, *args, **kwargs):
         slack_message = request.data
-        if slack_message.get('token') != SLACK_VERIFICATION_TOKEN:
+        if env != "test" and slack_message.get('token') != SLACK_VERIFICATION_TOKEN:
             return Response(status=status.HTTP_403_FORBIDDEN)
 
         file_ = open("/code/asset/" + slack_message["text"], "r")
