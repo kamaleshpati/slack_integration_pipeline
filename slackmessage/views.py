@@ -1,4 +1,5 @@
 import os
+import logging
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -16,9 +17,9 @@ env = os.environ.get('env')
 Client = slack.WebClient(SLACK_BOT_USER_TOKEN) if env != "test" else None
 
 
+# respond to app_mention messages
 class Events(APIView):
     def post(self, request, *args, **kwargs):
-
         slack_message = request.data
 
         # failed response
@@ -48,9 +49,12 @@ class Events(APIView):
                 message: MessageSerializer = serialize_messageinfo(event_message, user.data['username'])
 
             if env != "test" and Client is not None:
-                Client.chat_postMessage(method='chat.postMessage',
-                                        channel=channel,
-                                        text=bot_text + " " + str(user.data))
+                try:
+                    Client.chat_postMessage(method='chat.postMessage',
+                                            channel=channel,
+                                            text=bot_text + " " + str(user.data))
+                except Exception as e:
+                    logging.warn("cant post message")
 
             return Response(status=status.HTTP_200_OK)
 
@@ -58,6 +62,7 @@ class Events(APIView):
             return Response(status=status.HTTP_200_OK)
 
 
+# respond to / command to return all messages
 class Messages(APIView):
     def post(self, request, *args, **kwargs):
         slack_message = request.data
@@ -66,13 +71,17 @@ class Messages(APIView):
 
         if env != "test" and Client is not None:
             res = get_all_message(slack_message["user_id"])
-            Client.chat_postMessage(method='chat.postMessage',
-                                    channel=slack_message.get('channel_id'),
-                                    text=res)
+            try:
+                Client.chat_postMessage(method='chat.postMessage',
+                                        channel=slack_message.get('channel_id'),
+                                        text=res)
+            except Exception as e:
+                logging.warn("cant post message")
 
         return Response(status=status.HTTP_200_OK)
 
 
+# respond to upload_file / command
 class FilesOperation(APIView):
     def post(self, request, *args, **kwargs):
         slack_message = request.data
@@ -82,10 +91,13 @@ class FilesOperation(APIView):
         file_ = open("/code/asset/" + slack_message["text"], "r")
 
         if env != "test" and Client is not None:
-            Client.api_call("files.upload",
-                            files={'file': file_.buffer},
-                            data={'channels': slack_message.get('channel_id'),
-                                  'filename': file_.name,
-                                  'title': file_.name})
+            try:
+                Client.api_call("files.upload",
+                                files={'file': file_.buffer},
+                                data={'channels': slack_message.get('channel_id'),
+                                      'filename': file_.name,
+                                      'title': file_.name})
+            except Exception as e:
+                logging.warn("cant post message")
 
         return Response(status=status.HTTP_200_OK)

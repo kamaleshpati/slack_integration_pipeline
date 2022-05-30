@@ -1,5 +1,6 @@
 import json
 import os
+import logging
 
 from django.core import serializers
 
@@ -23,7 +24,7 @@ def serialize_userinfo(Client, user_id: str):
     if user.is_valid():
         user.save()
     else:
-        print(user.errors)
+        logging.warn(user.errors)
     return user
 
 
@@ -38,7 +39,7 @@ def serialize_messageinfo(event_message: dict, author: str):
     if message.is_valid():
         message.save()
     else:
-        print(message.errors)
+        logging.warn(message.errors)
 
     return message
 
