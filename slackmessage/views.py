@@ -11,9 +11,10 @@ from slackmessage.serilize_utils import serialize_userinfo, serialize_messageinf
 
 SLACK_VERIFICATION_TOKEN = getattr(settings, 'VERIFICATION_TOKEN', None)
 SLACK_BOT_USER_TOKEN = getattr(settings, 'BOT_USER_ACCESS_TOKEN', None)
-Client = slack.WebClient(SLACK_BOT_USER_TOKEN)
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 env = os.environ.get('env')
+Client = slack.WebClient(SLACK_BOT_USER_TOKEN) if env == "test" else None
+
 
 class Events(APIView):
     def post(self, request, *args, **kwargs):
@@ -21,7 +22,7 @@ class Events(APIView):
         slack_message = request.data
 
         # failed response
-        if env != "test" and slack_message.get('token') != SLACK_VERIFICATION_TOKEN:
+        if slack_message.get('token') != SLACK_VERIFICATION_TOKEN:
             return Response(status=status.HTTP_403_FORBIDDEN)
 
         # verification
@@ -46,11 +47,10 @@ class Events(APIView):
             if len(user.errors) == 0:
                 message: MessageSerializer = serialize_messageinfo(event_message, user.data['username'])
 
-            if env != "test":
+            if env != "test" and Client is not None:
                 Client.chat_postMessage(method='chat.postMessage',
                                         channel=channel,
                                         text=bot_text + " " + str(user.data))
-
 
             return Response(status=status.HTTP_200_OK)
 
@@ -66,9 +66,10 @@ class Messages(APIView):
 
         res = get_all_message(slack_message["user_id"])
 
-        Client.chat_postMessage(method='chat.postMessage',
-                                channel=slack_message.get('channel_id'),
-                                text=res)
+        if env != "test" and Client is not None:
+            Client.chat_postMessage(method='chat.postMessage',
+                                    channel=slack_message.get('channel_id'),
+                                    text=res)
 
         return Response(status=status.HTTP_200_OK)
 
@@ -81,7 +82,7 @@ class FilesOperation(APIView):
 
         file_ = open("/code/asset/" + slack_message["text"], "r")
 
-        if env != "test":
+        if env != "test" and Client is not None:
             Client.api_call("files.upload",
                             files={'file': file_.buffer},
                             data={'channels': slack_message.get('channel_id'),
