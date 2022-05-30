@@ -1,6 +1,11 @@
 version: 2
 jobs:
   build:
+    pre:
+      - curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
+      - pip install docker-compose
+    services:
+      - docker
     docker:
       - image: circleci/python:3.9
     steps:
@@ -16,12 +21,6 @@ jobs:
           key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
           paths:
             - "venv"
-      - run:
-          name: Install `docker-compose`
-          command: |
-            curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
-      - setup_remote_docker:
-          docker_layer_caching: false
       - run:
           name: Running tests
           command: |
