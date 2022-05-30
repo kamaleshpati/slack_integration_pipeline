@@ -13,7 +13,7 @@ SLACK_VERIFICATION_TOKEN = getattr(settings, 'VERIFICATION_TOKEN', None)
 SLACK_BOT_USER_TOKEN = getattr(settings, 'BOT_USER_ACCESS_TOKEN', None)
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 env = os.environ.get('env')
-Client = slack.WebClient(SLACK_BOT_USER_TOKEN) if env == "test" else None
+Client = slack.WebClient(SLACK_BOT_USER_TOKEN) if env != "test" else None
 
 
 class Events(APIView):

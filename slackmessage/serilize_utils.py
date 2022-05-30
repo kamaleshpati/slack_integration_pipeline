@@ -1,11 +1,19 @@
+import json
+import os
+
 from django.core import serializers
 
 from slackmessage.models import Message
 from slackmessage.serializer import UserSerializer, MessageSerializer
 
+env = os.environ.get('env')
 
 def serialize_userinfo(Client ,user_id:str):
-    userinfo: dict = Client.users_info(user=user_id)
+    if env == "test":
+        userinfo = json.load(open("/code/slackmessage/resources/user.json"))
+    else:
+        userinfo: dict = Client.users_info(user=user_id)
+
     user = dict()
     user['slackuser_id'] = userinfo['user'].get("id")
     user['username'] = userinfo['user'].get("real_name")
@@ -13,7 +21,6 @@ def serialize_userinfo(Client ,user_id:str):
     user: UserSerializer = UserSerializer(data=user, partial=True)
     if user.is_valid():
         user.save()
-        print(user.data)
     else:
         print(user.errors)
     return user
@@ -29,7 +36,6 @@ def serialize_messageinfo(event_message:dict, author:str):
     message: MessageSerializer = MessageSerializer(data=message, partial=True)
     if message.is_valid():
         message.save()
-        print(message.data)
     else:
         print(message.errors)
 

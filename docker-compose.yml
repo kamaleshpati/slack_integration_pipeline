@@ -51,7 +51,7 @@ services:
     entrypoint: /entrypoint.sh
     command: python manage.py test
     volumes:
-      - .:.
+      - .:/code
     environment:
       - POSTGRES_PORT=5432
       - POSTGRES_NAME=db
