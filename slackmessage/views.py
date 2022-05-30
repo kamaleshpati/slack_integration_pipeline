@@ -13,7 +13,7 @@ SLACK_VERIFICATION_TOKEN = getattr(settings, 'VERIFICATION_TOKEN', None)
 SLACK_BOT_USER_TOKEN = getattr(settings, 'BOT_USER_ACCESS_TOKEN', None)
 Client = slack.WebClient(SLACK_BOT_USER_TOKEN)
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
-
+env = os.environ.get('env')
 
 class Events(APIView):
     def post(self, request, *args, **kwargs):
@@ -21,7 +21,7 @@ class Events(APIView):
         slack_message = request.data
 
         # failed response
-        if slack_message.get('token') != SLACK_VERIFICATION_TOKEN:
+        if env != "test" and slack_message.get('token') != SLACK_VERIFICATION_TOKEN:
             return Response(status=status.HTTP_403_FORBIDDEN)
 
         # verification
@@ -50,6 +50,7 @@ class Events(APIView):
                                     channel=channel,
                                     text=bot_text + " " + str(user.data))
 
+
             return Response(status=status.HTTP_200_OK)
 
         else:
@@ -63,7 +64,7 @@ class Messages(APIView):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
         res = get_all_message(slack_message["user_id"])
-        print(slack_message)
+
         Client.chat_postMessage(method='chat.postMessage',
                                 channel=slack_message.get('channel_id'),
                                 text=res)
