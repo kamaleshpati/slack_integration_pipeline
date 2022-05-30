@@ -3,9 +3,6 @@ jobs:
   build:
     docker:
       - image: circleci/python:3.9
-    dependencies:
-      pre:
-        - pip install docker-compose
     steps:
       - checkout
       - restore_cache:
