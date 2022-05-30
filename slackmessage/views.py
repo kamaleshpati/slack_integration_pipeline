@@ -46,9 +46,10 @@ class Events(APIView):
             if len(user.errors) == 0:
                 message: MessageSerializer = serialize_messageinfo(event_message, user.data['username'])
 
-            Client.chat_postMessage(method='chat.postMessage',
-                                    channel=channel,
-                                    text=bot_text + " " + str(user.data))
+            if env != "test":
+                Client.chat_postMessage(method='chat.postMessage',
+                                        channel=channel,
+                                        text=bot_text + " " + str(user.data))
 
 
             return Response(status=status.HTTP_200_OK)
@@ -80,10 +81,11 @@ class FilesOperation(APIView):
 
         file_ = open("/code/asset/" + slack_message["text"], "r")
 
-        Client.api_call("files.upload",
-                        files={'file': file_.buffer},
-                        data={'channels': slack_message.get('channel_id'),
-                              'filename': file_.name,
-                              'title': file_.name})
+        if env != "test":
+            Client.api_call("files.upload",
+                            files={'file': file_.buffer},
+                            data={'channels': slack_message.get('channel_id'),
+                                  'filename': file_.name,
+                                  'title': file_.name})
 
         return Response(status=status.HTTP_200_OK)
