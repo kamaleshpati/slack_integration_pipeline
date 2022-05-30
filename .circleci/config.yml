@@ -3,6 +3,9 @@ jobs:
   build:
     docker:
       - image: circleci/python:3.9
+    dependencies:
+      pre:
+        - pip install docker-compose
     steps:
       - checkout
       - restore_cache:
@@ -16,14 +19,6 @@ jobs:
           key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
           paths:
             - "venv"
-      - run:
-          name: Install `docker-compose`
-          command: |
-            curl -L https://github.com/docker/compose/releases/download/2.5.1/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
-            chmod +x ~/docker-compose
-            sudo mv ~/docker-compose /usr/local/bin/docker-compose
-      - setup_remote_docker:
-          docker_layer_caching: false
       - run:
           name: Running tests
           command: |
