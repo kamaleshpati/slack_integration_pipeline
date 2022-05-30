@@ -90,7 +90,6 @@ class FilesOperation(APIView):
 
         file_name = slack_message["text"]
 
-
         if env != "test" and Client is not None:
             try:
                 if file_name is "" or file_name is None:
