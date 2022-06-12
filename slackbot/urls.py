@@ -17,6 +17,6 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('slackmessage/', include('slackmessage.urls')),
+    path('slack/', include('slackmessage.urls')),
     path('admin/', admin.site.urls),
 ]

@@ -18,7 +18,7 @@ register ngrok url with slack event subscription for app_mention:read Oauth with
 
 
 <h1>Start server</h1>
-docker-compose up django-dev --build
+docker-compose up django-dev
 
 <h1> run tests</h1>
 docker-compose up django-test --build --abort-on-container-exit --exit-code-from django-test

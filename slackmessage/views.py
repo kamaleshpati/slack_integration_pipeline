@@ -17,6 +17,10 @@ env = os.environ.get('env')
 Client = slack.WebClient(SLACK_BOT_USER_TOKEN) if env != "test" else None
 
 
+class Health(APIView):
+    def get(self, request):
+        return Response(data="hiii",status=status.HTTP_200_OK)
+
 # respond to app_mention messages
 class Events(APIView):
     def post(self, request, *args, **kwargs):
