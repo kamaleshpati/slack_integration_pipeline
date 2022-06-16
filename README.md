@@ -29,6 +29,7 @@ docker-compose push django
 minikube start
 eval $(minikube docker-env)
 minikube dashboard
+echo -n ${RDS_TEMP_CREDENTIALS} | base64 #secret kube
 kubectl apply -f kubernets/postgres
 kubectl apply -f kubernets/django/batch.yml
 kubectl apply -f kubernets/django/server.yml
