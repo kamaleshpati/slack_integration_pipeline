@@ -5,7 +5,7 @@ install ngrok: brew install ngrok/ngrok/ngrok
 
 add token: ngrok config add-authtoken <token>
 
-start: ngrok http 8000
+start: ngrok http http://192.168.64.85:31515/
 
 <h2>step 2:</h2>
 

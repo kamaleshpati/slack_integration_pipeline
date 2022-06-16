@@ -43,6 +43,22 @@ services:
     networks:
       - slack_integration
 
+  django:
+    restart: always
+    container_name: django
+    image: k97pati/django:v1
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    entrypoint: /entrypoint.sh
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    networks:
+      - slack_integration
+
   django-test:
     container_name: django-test
     build:
