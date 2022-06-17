@@ -33,7 +33,7 @@ services:
       - "8000:8000"
     environment:
       - POSTGRES_PORT=5432
-      - POSTGRES_NAME=db
+      - POSTGRES_HOST=db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     depends_on:
@@ -70,7 +70,7 @@ services:
       - .:/code
     environment:
       - POSTGRES_PORT=5432
-      - POSTGRES_NAME=db
+      - POSTGRES_HOST=db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - env=test
