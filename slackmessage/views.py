@@ -49,14 +49,15 @@ class Events(APIView):
 
             user: UserSerializer = serialize_userinfo(Client, user)
 
-            if len(user.errors) == 0:
-                message: MessageSerializer = serialize_messageinfo(event_message, user.data['username'])
+            if len(user.errors) != 0:
+                logging.warn("didnt upserted the info for user")
+            message: MessageSerializer = serialize_messageinfo(event_message, user.data['username'])
 
             if env != "test" and Client is not None:
                 try:
                     Client.chat_postMessage(method='chat.postMessage',
                                             channel=channel,
-                                            text=bot_text + " " + str(user.data))
+                                            text=bot_text + " " + str(user.data) + " "+ str(message.data))
                 except Exception as e:
                     logging.warn("cant post message")
 
@@ -96,7 +97,7 @@ class FilesOperation(APIView):
 
         if env != "test" and Client is not None:
             try:
-                if file_name is "" or file_name is None:
+                if file_name == "" or file_name is None:
                     Client.chat_postMessage(method='chat.postMessage',
                                             channel=slack_message.get('channel_id'),
                                             text="no file name is given")
