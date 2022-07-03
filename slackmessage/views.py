@@ -57,7 +57,7 @@ class Events(APIView):
                 try:
                     Client.chat_postMessage(method='chat.postMessage',
                                             channel=channel,
-                                            text=bot_text + " " + str(user.data) + " "+ str(message.data))
+                                            text=bot_text + " " + str(user.data))
                 except Exception as e:
                     logging.warn("cant post message")
 

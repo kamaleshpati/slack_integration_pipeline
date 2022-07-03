@@ -5,7 +5,7 @@ install ngrok: brew install ngrok/ngrok/ngrok
 
 add token: ngrok config add-authtoken <token>
 
-start: ngrok http 8000
+start: ngrok http http://192.168.64.85:31515/
 
 <h2>step 2:</h2>
 
@@ -21,4 +21,16 @@ register ngrok url with slack event subscription for app_mention:read Oauth with
 docker-compose up django-dev
 
 <h1> run tests</h1>
-docker-compose up django-test --build --abort-on-container-exit --exit-code-from django-test
+docker-compose up django-test
+
+<h1>kubeflow</h1>
+docker-compose build django
+docker-compose push django
+minikube start
+eval $(minikube docker-env)
+minikube dashboard
+echo -n ${RDS_TEMP_CREDENTIALS} | base64 #secret kube
+kubectl apply -f kubernets/postgres
+kubectl apply -f kubernets/django/batch.yml
+kubectl apply -f kubernets/django/server.yml
+kubectl apply -f kubernets/django/service.yml
